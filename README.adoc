@@ -1,4 +1,4 @@
-=== README.adoc
+=== mp-grouper-podman/README.adoc
 Goal: created a podman image that sets up midPoint 4.9, Grouper 5, and OpenLDAP with proper shares so that mP can populate LDAP and Grouper can use LDAP as a subject source
 
 notes file: kh/opt/_asdo/mp-grouper-podman.adoc 
