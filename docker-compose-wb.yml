@@ -1,0 +1,808 @@
+
+services:
+  grouper_daemon:
+    build: ./grouper_daemon/
+    command: bash -c "while ! nc -z grouper-data 5432; do echo waiting for pgsql on grouper_data to start; sleep 3; done; while ! nc -z directory 389 > /dev/null; do echo waiting for ldap on directory to start; sleep 3; done; exec daemon"
+    depends_on:
+     - grouper_data
+     - directory
+    environment:
+     - ENV
+     - USERTOKEN
+     - GROUPER_CLIENT_WEBSERVICE_PASSWORD_FILE=password
+     - GROUPER_DATABASE_PASSWORD_FILE=/run/secrets/g_database_password.txt
+     #- RABBITMQ_PASSWORD_FILE=/run/secrets/rabbitmq_password.txt
+     - RABBITMQ_PASSWORD=password
+     - SUBJECT_SOURCE_LDAP_PASSWORD=password
+    networks:
+      net:
+        aliases:
+         - grouper-daemon
+    healthcheck:
+      test: gsh
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    secrets:
+     - g_database_password.txt
+     - rabbitmq_password.txt
+    volumes:
+     - type: bind
+       source: ./configs-and-secrets/grouper/application/grouper.properties
+       target: /opt/grouper/grouperWebapp/WEB-INF/classes/grouper.properties
+     - type: bind
+       source: ./configs-and-secrets/grouper/application/grouper.client.properties
+       target: /opt/grouper/grouperWebapp/WEB-INF/classes/grouper.client.properties
+     - type: bind
+       source: ./configs-and-secrets/grouper/application/grouper.hibernate.properties
+       target: /opt/grouper/grouperWebapp/WEB-INF/classes/grouper.hibernate.properties
+     - type: bind
+       source: ./configs-and-secrets/grouper/application/grouper-loader.properties
+       target: /opt/grouper/grouperWebapp/WEB-INF/classes/grouper-loader.properties
+     - type: bind
+       source: ./configs-and-secrets/grouper/application/subject.properties
+       target: /opt/grouper/grouperWebapp/WEB-INF/classes/subject.properties
+     - type: bind
+       source: ./configs-and-secrets/grouper/application/grouper.text.en.us.properties
+       target: /opt/grouper/grouperWebapp/WEB-INF/classes/grouperText/grouper.text.en.us.properties
+  grouper_ui:
+    build: 
+      context: ./grouper_ui/
+      args:
+        - CSPHOSTNAME
+    command: bash -c "while ! nc -z grouper-data 5432; do echo waiting for pgsql on grouper_data to start; sleep 3; done; while ! nc -z directory 389 > /dev/null; do echo waiting for ldap on directory to start; sleep 3; done; exec ui"
+    depends_on:
+     - grouper_data
+     - directory
+    environment:
+     - ENV
+     - USERTOKEN
+     - GROUPER_DATABASE_PASSWORD_FILE=/run/secrets/g_database_password.txt
+     - SUBJECT_SOURCE_LDAP_PASSWORD=password
+    networks:
+      net:
+        aliases:
+         - grouper-ui
+    ports:
+     - 8443:443
+    healthcheck:
+      test: curl -k -f https://127.0.0.1/grouper/grouperUi/ || exit 1
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    secrets:
+     - g_database_password.txt
+     - source: g_sp-key.pem
+       target: shib_sp-key.pem
+     - source: g_host-key.pem
+       target: host-key.pem
+    volumes:
+     - type: bind
+       source: ./configs-and-secrets/grouper/application/grouper.properties
+       target: /opt/grouper/conf/grouper.properties
+     - type: bind
+       source: ./configs-and-secrets/grouper/application/grouper.client.properties
+       target: /opt/grouper/conf/grouper.client.properties
+     - type: bind
+       source: ./configs-and-secrets/grouper/shibboleth/sp-cert.pem
+       target: /etc/shibboleth/sp-cert.pem
+     - type: bind
+       source: ./configs-and-secrets/grouper/shibboleth/shibboleth2.xml
+       target: /etc/shibboleth/shibboleth2.xml
+       # Note: due to a bug in https://github.internet2.edu/docker/grouper/blob/2.5.57/container_files/usr-local-bin/librarySetupFilesForProcess.sh#L72
+       # This file had to be mounted as shib2.conf, instead of shib.conf (bind mounts don't want to be moved)
+     - type: bind
+       source: ./configs-and-secrets/grouper/httpd/shib.conf
+       target: /etc/httpd/conf.d/shib2.conf
+     - type: bind
+       source: ./configs-and-secrets/grouper/httpd/host-cert.pem
+       target: /etc/pki/tls/certs/host-cert.pem
+     - type: bind
+       source: ./configs-and-secrets/grouper/httpd/host-cert.pem
+       target: /etc/pki/tls/certs/cachain.pem
+     - type: bind
+       source: ./configs-and-secrets/grouper/application/grouper.hibernate.properties
+       target: /opt/grouper/grouperWebapp/WEB-INF/classes/grouper.hibernate.properties
+     - type: bind
+       source: ./configs-and-secrets/grouper/application/grouper-loader.properties
+       target: /opt/grouper/grouperWebapp/WEB-INF/classes/grouper-loader.properties
+     - type: bind
+       source: ./configs-and-secrets/grouper/application/subject.properties
+       target: /opt/grouper/grouperWebapp/WEB-INF/classes/subject.properties
+     - type: bind
+       source: ./configs-and-secrets/grouper/application/grouper.text.en.us.properties
+       target: /opt/grouper/grouperWebapp/WEB-INF/classes/grouperText/grouper.text.en.us.properties
+  grouper_ws:
+    build: ./grouper_ws/
+    command: bash -c "while ! nc -z grouper_data 5432; do echo waiting for pgsql to start; sleep 3; done; while ! nc -z directory 389; do echo waiting for ldap to start; sleep 3; done; exec ws"
+    depends_on:
+     - grouper_data
+     - directory
+    environment:
+     - ENV
+     - GROUPER_DATABASE_PASSWORD_FILE=/run/secrets/g_database_password.txt
+     - SUBJECT_SOURCE_LDAP_PASSWORD=password
+     - USERTOKEN
+    networks:
+      net:
+        aliases:
+         - grouper-ws
+    ports:
+     - 9443:443
+    healthcheck:
+      test: curl -k -f https://127.0.0.1/grouper-ws/status?diagnosticType=trivial || exit 1
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    secrets:
+     - g_database_password.txt
+     - source: g_sp-key.pem
+       target: shib_sp-key.pem
+     - source: g_host-key.pem
+       target: host-key.pem
+    volumes:
+     - type: bind
+       source: ./configs-and-secrets/grouper/application/grouper.properties
+       target: /opt/grouper/conf/grouper.properties
+     - type: bind
+       source: ./configs-and-secrets/grouper/application/grouper.client.properties
+       target: /opt/grouper/conf/grouper.client.properties
+     - type: bind
+       source: ./configs-and-secrets/grouper/httpd/host-cert.pem
+       target: /etc/pki/tls/certs/host-cert.pem
+     - type: bind
+       source: ./configs-and-secrets/grouper/httpd/host-cert.pem
+       target: /etc/pki/tls/certs/cachain.pem
+     - type: bind
+       source: ./configs-and-secrets/grouper/application/grouper.hibernate.properties
+       target: /opt/grouper/grouperWebapp/WEB-INF/classes/grouper.hibernate.properties
+     - type: bind
+       source: ./configs-and-secrets/grouper/application/grouper-loader.properties
+       target: /opt/grouper/grouperWebapp/WEB-INF/classes/grouper-loader.properties
+     - type: bind
+       source: ./configs-and-secrets/grouper/application/subject.properties
+       target: /opt/grouper/grouperWebapp/WEB-INF/classes/subject.properties
+     - type: bind
+       source: ./configs-and-secrets/grouper/application/grouper.text.en.us.properties
+       target: /opt/grouper/grouperWebapp/WEB-INF/classes/grouperText/grouper.text.en.us.properties
+  grouper_data:
+    build: ./grouper_data/
+    networks:
+      net:
+        aliases:
+         - grouper-data
+    ports:
+     - 45432:5432
+    healthcheck:
+      test: /usr/bin/pg_isready
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    volumes:
+     - grouper_data:/var/lib/pgsql/data/
+
+  directory:
+    build: ./directory/
+    links:
+     - "ad:ad"
+    ports:
+     - 1389:389
+    networks:
+     - net
+    healthcheck:
+      test: netstat -an | grep :389 | grep LISTEN
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    volumes:
+     - ldap:/var/lib/dirsrv
+
+  sources:
+    build: ./sources/
+    ports:
+     - 13306:3306
+    networks:
+     - net
+    healthcheck:
+      test: curl -s 127.0.0.1:3306
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    volumes:
+     - source_mysql:/var/lib/mysql
+     - source_data:/var/lib/mysqlmounted
+    environment:
+     - CREATE_NEW_DATABASE=if_needed
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+
+  comanage_data:
+    build: ./comanage_data/
+    environment:
+      POSTGRES_USER: registry_user
+      POSTGRES_PASSWORD: Password1
+      POSTGRES_DB: registry
+    networks:
+      net:
+        aliases:
+         - comanage-data
+    ports:
+      - 25432:5432
+    healthcheck:
+      test: /usr/bin/pg_isready
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    volumes:
+     - comanage_data:/var/lib/postgresql/data
+
+  comanage_match_data:
+    build: ./comanage_match_data/
+    environment:
+      POSTGRES_USER: match_user
+      POSTGRES_PASSWORD: Password1
+      POSTGRES_DB: match
+    networks:
+      net:
+        aliases:
+         - comanage-match-data
+    ports:
+      - 55432:5432
+    healthcheck:
+      test: /usr/bin/pg_isready
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    volumes:
+     - comanage_match_data:/var/lib/postgresql/data
+
+  comanage_midpoint_data:
+    build: ./comanage_midpoint_data/
+    environment:
+      POSTGRES_USER: comanage_midpoint_loader
+      POSTGRES_PASSWORD: Password1
+      POSTGRES_DB: comanage_midpoint_loader
+    networks:
+      net:
+        aliases:
+         - comanage-midpoint-data
+    ports:
+      - 35432:5432
+    healthcheck:
+      test: /usr/bin/pg_isready
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    volumes:
+     - comanage_midpoint_data:/var/lib/postgresql/data
+
+  data_init:
+    image: evolveum/midpoint:${MP_VER:-4.9.3}-rockylinux
+    depends_on:
+      midpoint_data:
+        condition: service_healthy
+    command: >
+      bash -c "
+      cd /opt/midpoint ;
+      if [ ! -z "${CSPHOSTNAME}" ]; then sed -i 's|__SERVERNAME__|${CSPHOSTNAME}|g' /opt/midpoint/mp-home-in/post-initial-objects/securityPolicy/000-security-policy.xml ; else echo 'var not set' ; fi ;
+      if [ ! -z "${CSPHOSTNAME}" ]; then sed -i 's|__SERVERNAME__|${CSPHOSTNAME}|g' /opt/midpoint/mp-home-in/post-initial-objects/SecurityPolicy.xml ; else echo 'var not set' ; fi ;
+      bin/midpoint.sh init-native ;
+      echo ' - - - - - - ' ;
+      bin/ninja.sh -B info >/dev/null 2>/tmp/ninja.log ;
+      grep -q \"ERROR\" /tmp/ninja.log && (
+      bin/ninja.sh run-sql --create --mode REPOSITORY  ;
+      bin/ninja.sh run-sql --create --mode AUDIT
+      ) ||
+      echo -e '\\n Repository init is not needed...' ;
+      if [ $$(keytool -list -keystore /opt/midpoint/var/keystore.jceks -storetype jceks -storepass:file /run/secrets/m_keystore_password.txt | grep -c 'local_gen_cert') -eq 0 ] ;
+      then
+      keytool -importcert -keystore /opt/midpoint/var/keystore.jceks -storetype jceks -storepass:file /run/secrets/m_keystore_password.txt -trustcacerts -alias 'local_gen_cert' -file /run/secrets/mp_host-cert.pem -noprompt ;
+      else
+        echo 'Certificate exists in the cert store' ;
+      fi ;
+      cp /opt/midpoint/csv_in/cs-portal.csv /opt/midpoint/var/ ;
+      cp /opt/midpoint/csv_in/faculty-portal.csv /opt/midpoint/var/ ;
+      cp /opt/midpoint/csv_in/mailing-lists.csv /opt/midpoint/var/ ;
+      cp -R /opt/midpoint/mp-home-in/* /opt/midpoint/var/ ;
+      echo "env var is:** $CSPHOSTNAME **"
+      "
+    environment:
+     - MP_SET_midpoint_repository_jdbcUsername=midpoint
+     - MP_SET_midpoint_repository_jdbcPassword_FILE=/run/secrets/m_database_password.txt
+     - MP_SET_midpoint_repository_jdbcUrl=jdbc:postgresql://midpoint_data:5432/midpoint
+     - MP_SET_midpoint_repository_database=postgresql
+     - MP_INIT_CFG=/opt/midpoint/var
+     - MP_PW_DEF=/run/secrets/m_keystore_password.txt
+     - MP_KEYSTORE=/opt/midpoint/var/keystore.jceks
+     - CSPHOSTNAME
+    networks:
+     - net
+    secrets:
+     - m_database_password.txt
+     - m_keystore_password.txt
+     - mp_host-cert.pem
+    volumes:
+     - midpoint_home:/opt/midpoint/var
+     - ./midpoint_server/container_files/mp-home/:/opt/midpoint/mp-home-in/
+     - ./midpoint_server/container_files/mp-home/cs-portal.csv:/opt/midpoint/csv_in/cs-portal.csv
+     - ./midpoint_server/container_files/mp-home/faculty-portal.csv:/opt/midpoint/csv_in/faculty-portal.csv
+     - ./midpoint_server/container_files/mp-home/mailing-lists.csv:/opt/midpoint/csv_in/mailing-lists.csv
+
+  midpoint_data:
+    image: postgres:16-alpine
+    environment:
+     - POSTGRES_PASSWORD_FILE=/run/secrets/m_database_password.txt
+     - POSTGRES_USER=midpoint
+     - POSTGRES_INITDB_ARGS=--lc-collate=en_US.utf8 --lc-ctype=en_US.utf8
+    secrets:
+     - m_database_password.txt
+    ports:
+     - 5432:5432 
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d midpoint -U midpoint" ]
+      interval: 5s
+      timeout: 10s
+      retries: 4
+    networks:
+     - net
+    volumes:
+     - midpoint_data:/var/lib/postgresql/data
+
+  midpoint_server:
+    image: evolveum/midpoint:${MP_VER:-4.9.3}-rockylinux
+    container_name: midpoint_server
+    hostname: midpoint-container
+    depends_on:
+      data_init:
+        condition: service_completed_successfully
+      midpoint_data:
+        condition: service_healthy
+    command: [ "/opt/midpoint/bin/midpoint.sh", "container" ]
+    expose:
+     - 8080
+    environment:
+     - MP_SET_midpoint_repository_jdbcUsername=midpoint
+     - MP_SET_midpoint_repository_jdbcPassword_FILE=/run/secrets/m_database_password.txt
+     - MP_SET_midpoint_repository_jdbcUrl=jdbc:postgresql://midpoint_data:5432/midpoint
+     - MP_SET_midpoint_repository_database=postgresql
+     - MP_SET_midpoint_keystore_keyStorePassword_FILE=/run/secrets/m_keystore_password.txt
+     - MP_SET_server_port=8080
+     - MP_SET_server_tomcat_ajp_enabled=true
+     - MP_SET_server_tomcat_ajp_address="0.0.0.0"
+     - MP_SET_server_tomcat_ajp_port=9090
+     - MP_SET_server_tomcat_ajp_secret=s3cr3t
+     - MP_SET_midpoint_administrator_initialPassword=Test5ecr3t
+     - MP_UNSET_midpoint_repository_hibernateHbm2ddl=1
+     - MP_NO_ENV_COMPAT=1
+     - MP_ENTRY_POINT=/opt/midpoint-dirs-docker-entrypoint
+    networks:
+     - net
+    secrets:
+     - m_database_password.txt
+     - m_keystore_password.txt
+     - mp_host-key.pem
+     - mp_shibboleth_sp_keys.jks
+    volumes:
+     - midpoint_home:/opt/midpoint/var
+     - hr_export:/opt/midpoint/var/resource_files/hr
+     - sis_export:/opt/midpoint/var/resource_files/sis
+     - type: bind
+       source: ./midpoint_server/container_files/csv/source-hr.csv
+       target: /opt/midpoint/csv/source-hr.csv
+
+  idp:
+    build: 
+      context: ./idp/
+      args:
+        - CSPHOSTNAME
+    depends_on:
+     - directory
+    environment:
+     - JETTY_MAX_HEAP=64m
+     - JETTY_BROWSER_SSL_KEYSTORE_PASSWORD=password
+     - JETTY_BACKCHANNEL_SSL_KEYSTORE_PASSWORD=password
+    networks:
+     - net
+    ports:
+     - 13443:443
+    volumes:
+     - generated-metadata:/opt/shibboleth-idp/metadata/generated
+     - generated-config:/opt/shibboleth-idp/conf/generated
+     
+  idp_ui:
+    build: 
+      context: ./idp_ui/
+      args:
+        - CSPHOSTNAME
+    depends_on:
+     - idp_ui_data
+    networks:
+     - net
+    ports:
+     - 8080:8080
+    healthcheck:
+      test: curl -k -f https://127.0.0.1:8443/idpui/login || exit 1
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    volumes:
+     - generated-metadata:/generated-metadata
+     - generated-config:/generated-config
+
+  idp_ui_api:
+    build:
+      context: ./idp_ui_api/
+      args:
+        - CSPHOSTNAME
+    depends_on:
+     - idp_ui_data
+     - idp_ui
+    networks:
+     - net
+    healthcheck:
+      test: curl -k -s https://127.0.0.1:8443/idpui-api
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    volumes:
+     - generated-metadata:/generated-metadata
+     - generated-config:/generated-config
+ 
+  idp_ui_data:
+    image: postgres
+    environment:
+      POSTGRES_USER: shibui
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: shibui
+    networks:
+      net:
+        aliases:
+         - idpui-data
+    ports:
+      - 15432:5432
+    healthcheck:
+      test: /usr/bin/pg_isready
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    volumes:
+     - idpui_data:/var/lib/postgresql/data
+
+  mq:
+    build: ./mq/
+    environment:
+     - RABBITMQ_NODENAME=docker-rabbit
+    hostname: rabbitmq
+    networks:
+     - net
+    ports:
+     - 15672:15672
+     - 5672:5672
+    healthcheck:
+      test: curl -s 127.0.0.1:15672 > /dev/null
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    volumes:
+     - mq:/var/lib/rabbitmq
+
+  webproxy:
+    build: 
+      context: ./webproxy/
+      args:
+        - CSPHOSTNAME
+    networks:
+     - net
+    ports:
+     - 443:443
+ 
+  mpproxy:
+    build:  
+      context: ./mpproxy/
+      args:
+        - CSPHOSTNAME
+    networks:
+     - net
+    ports:
+     - 7443:443
+ 
+  wordpress_server:
+    build: 
+      context: ./wordpress_server/
+      args:
+       - CSPHOSTNAME
+    networks:
+      - net
+    depends_on:
+      - wordpress_data
+    command: bash -c 'if [ ! -s /var/www/html/wp-config.php ];  then while ! nc -z  wordpress_data 3306 ; do echo waiting for mysql on wordpress_data to start; sleep 3; done; /root/wp core download --allow-root && sleep 10 && /root/wp config create --dbname=wordpress --dbuser=wordpress --dbpass=54y6RxN7GfC7aes3 --dbhost=wordpress_data --allow-root; sleep 3 && /root/wp core install --url="https://localhost/" --title="wordpress" --admin_user="banderson" --admin_password="password" --admin_email="sentrifugo.container@gmail.com" --allow-root && /root/wp --allow-root rewrite structure "/%postname%" --hard --debug; /root/wp  rewrite flush --hard --debug --allow-root && sed -i "s/<\/IfModule>/RewriteCond \%{HTTP:Authorization} \^\(\.\*\)\nRewriteRule \^\(\.\*\) - [E=HTTP_AUTHORIZATION:\%1]\n<\/IfModule>\nSetEnvIf Authorization "\(\.\*\)" HTTP_AUTHORIZATION=\$$1/" /var/www/html/.htaccess && /root/wp plugin install jwt-authentication-for-wp-rest-api  --activate --allow-root && /root/wp plugin install wp-rest-api-log --activate --allow-root && /root/wp plugin install shibboleth --activate --allow-root && /root/sed.sh; fi; php-fpm -D; /usr/local/bin/startup.sh;'
+    ports:
+      - "80:80"
+      - "12443:443"
+    healthcheck:
+      test: curl -s wordpress_server:80
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    devices:
+      - "/dev/tty:/dev/tty"
+    volumes:
+      - wordpress_server:/var/www/html
+      - type: bind
+        source: ./configs-and-secrets/wordpress/shibboleth/shibboleth2.xml
+        target: /etc/shibboleth/shibboleth2.xml
+      - type: bind
+        source: ./configs-and-secrets/wordpress/httpd/host-cert.pem
+        target: /etc/pki/tls/certs/cachain.pem
+      - type: bind
+        source: ./configs-and-secrets/wordpress/httpd/shib.conf
+        target: /etc/httpd/conf.d/shib.conf
+
+  wordpress_data:
+    build: ./wordpress_data/
+    networks:
+      - net
+    healthcheck:
+      test: curl -s 127.0.0.1:3306543 ; res=$$? ; if [[ $$res -ne 1 ]]; then exit 1; fi
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    volumes:
+      - wordpress_data:/var/lib/mysql
+    ports:
+      - 3306
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+
+  comanage:
+    build: 
+      context: ./comanage/
+      args:
+        - CSPHOSTNAME
+    depends_on:
+     - comanage_data
+    environment:
+     - ENV
+     - USERTOKEN
+     - SHIBBOLETH_SP_ENCRYPT_CERT=/etc/shibboleth/sp-cert.pem
+     - SHIBBOLETH_SP_ENCRYPT_PRIVKEY=/run/secrets/shib_sp-key.pem
+     - SHIBBOLETH_SP_SIGNING_CERT=/etc/shibboleth/sp-cert.pem
+     - SHIBBOLETH_SP_SIGNING_PRIVKEY=/run/secrets/shib_sp-key.pem
+    networks:
+     - net
+    ports:
+     - 11443:443
+    healthcheck:
+      test: curl -kf https://127.0.0.1/registry/ || exit 1
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    volumes:
+     - type: bind
+       source: ./configs-and-secrets/comanage/shibboleth/shibboleth2.xml
+       target: /etc/shibboleth/shibboleth2.xml
+     - type: bind
+       source: ./configs-and-secrets/comanage/httpd/host-cert.pem
+       target: /etc/pki/tls/certs/cachain.pem
+     - type: bind
+       source: ./configs-and-secrets/comanage/shibboleth/sp-cert.pem
+       target: /etc/shibboleth/sp-cert.pem
+    secrets:
+     - source: c_sp-key.pem
+       target: shib_sp-key.pem
+
+  comanage_cron:
+    build: 
+      context: ./comanage_cron/
+      args:
+        - CSPHOSTNAME
+    depends_on:
+     - comanage
+    healthcheck:
+      test: echo 'QUIT' | nc -w 10 comanage-data 5432
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    environment:
+     - ENV
+     - USERTOKEN
+    networks:
+      net:
+        aliases:
+          - comanage-cron
+
+  comanage_match:
+    build: 
+      context: ./comanage_match/
+      args:
+        - CSPHOSTNAME
+    depends_on:
+     - comanage_match_data
+    environment:
+     - ENV
+     - USERTOKEN
+    networks:
+     - net
+    ports:
+     - 19443:443
+    healthcheck:
+      test: curl -kf https://127.0.0.1/match/ || exit 1
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
+  ad:
+    build:
+      context: ./ad/
+    cap_add:
+      - CAP_SYS_ADMIN
+    healthcheck:
+      test: netstat -an | grep :3268 | grep LISTEN
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    environment:
+     - DOMAIN=ad.example.edu
+     - DOMAINPASS=Password1
+    hostname: dc1
+    networks:
+      net:
+        aliases:
+          - dc1.ad.example.edu
+    volumes:
+     - ad_samba_data:/var/lib/samba
+     - ad_samba_cfg:/etc/samba/external
+    expose:
+      - 445
+    ports:
+      - 389:389
+      - 389:389/udp
+      - 636:636
+      - 3268-3269:3268-3269
+
+  dozzproxy:
+    build:
+      context: ./dozzproxy/
+      args:
+        - CSPHOSTNAME
+    networks:
+     - net
+    ports:
+     - 6443:443
+
+  dozzle:
+    image: amir20/dozzle:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 8081:8080
+    environment:
+      DOZZLE_BASE: /dozzle
+      DOZZLE_AUTH_PROVIDER: forward-proxy
+      DOZZLE_AUTH_HEADER_USER: eppn
+      DOZZLE_AUTH_HEADER_EMAIL: mail
+      DOZZLE_AUTH_HEADER_NAME: displayName
+      DOZZLE_ENABLE_ACTIONS: true
+      DOZZLE_ENABLE_SHELL: true
+    networks:
+      - net
+    healthcheck:
+      test: ["CMD", "/dozzle", "healthcheck"]
+      interval: 3s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+
+  hr:
+    image: python:3.12
+    hostname: hr
+    mem_limit: 256m
+    environment:
+      - FLASK_ENV=development
+      - FLASK_APP=/src/hr_app.py
+      - DATABASE=/var/employees.db
+      - PYTHONDONTWRITEBYTECODE=1
+    networks:
+      - net
+    working_dir: /src
+    volumes:
+      - ./hr_app:/src
+      - hr_export:/src/exported_data
+      - hr_data:/var
+    entrypoint: >
+      bash -c "
+      [ ! -f "exported_data/hr_data.csv" ] && cp export-initial.csv exported_data/hr_data.csv || echo "CSV_EXPORT_ALREADY_INITIALIZED";
+      apt-get update;
+      apt-get install -y sqlite3;
+      pip install --upgrade pip==25.0.1;
+      pip install -r /src/requirements.txt;
+      gunicorn --bind 0.0.0.0:5000 --workers 4 hr_app:app
+      "
+
+  sis:
+    image: python:3.12
+    hostname: sis
+    mem_limit: 256m
+    environment:
+      - FLASK_ENV=development
+      - FLASK_APP=/src/sis_app.py
+      - DATABASE=/var/students.db
+      - PYTHONDONTWRITEBYTECODE=1
+    networks:
+      - net
+    working_dir: /src
+    volumes:
+      - ./sis_app:/src
+      - sis_export:/src/exported_data
+      - sis_data:/var
+    entrypoint: >
+      bash -c "
+      [ ! -f "exported_data/sis_data.csv" ] && cp export-initial.csv exported_data/sis_data.csv || echo "CSV_EXPORT_ALREADY_INITIALIZED";
+      apt-get update;
+      apt-get install -y sqlite3;
+      pip install --upgrade pip==25.0.1;
+      pip install -r /src/requirements.txt;
+      gunicorn --bind 0.0.0.0:5000 --workers 4 sis_app:app
+      "
+
+networks:
+  net:    
+    driver: bridge
+
+secrets:
+# grouper
+  g_host-key.pem:
+    file: ./configs-and-secrets/grouper/httpd/host-key.pem
+  g_sp-key.pem:
+    file: ./configs-and-secrets/grouper/shibboleth/sp-key.pem
+  g_database_password.txt:
+    file: ./configs-and-secrets/grouper/application/database_password.txt
+  rabbitmq_password.txt:
+    file: ./configs-and-secrets/grouper/application/rabbitmq_password.txt
+# midPoint
+  m_database_password.txt:
+    file: ./configs-and-secrets/midpoint/application/database_password.txt
+  m_keystore_password.txt:
+    file: ./configs-and-secrets/midpoint/application/keystore_password.txt
+  mp_host-key.pem:
+    file: ./configs-and-secrets/midpoint/httpd/host-key.pem
+  mp_host-cert.pem:
+    file: ./configs-and-secrets/midpoint/httpd/host-cert.pem
+  mp_shibboleth_sp_keys.jks:
+    file: ./configs-and-secrets/midpoint/shibboleth/shibboleth_sp_keys.jks
+# COmanage
+  c_sp-key.pem:
+    file: ./configs-and-secrets/comanage/shibboleth/sp-key.pem
+
+volumes:
+  grouper_data:
+  grouper_data_2:
+  source_data:
+  comanage_data:
+  comanage_match_data:
+  comanage_midpoint_data:
+  comanage_mysql:
+  source_mysql:
+  target_data:
+  ldap:
+  db_init:
+  mp_pw:
+  midpoint_data:
+  midpoint_home:
+  mq:
+  wordpress_data:
+  wordpress_server:
+  generated-config:
+  generated-metadata:
+  mariadb-data:
+  idpui_data:
+  ad_samba_data:
+  ad_samba_cfg:
+  hr_export:
+  hr_data:
+  sis_export:
+  sis_data:
