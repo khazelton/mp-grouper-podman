@@ -1,0 +1,15 @@
+  directory:
+    build: ./directory/
+    links:
+     - "ad:ad"
+    ports:
+     - 1389:389
+    networks:
+     - net
+    healthcheck:
+      test: netstat -an | grep :389 | grep LISTEN
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    volumes:
+     - ldap:/var/lib/dirsrv
