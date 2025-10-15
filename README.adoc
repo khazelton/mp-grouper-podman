@@ -2,6 +2,7 @@
 Goal: created a podman image that sets up midPoint 4.9, Grouper 5, and OpenLDAP with proper shares so that mP can populate LDAP and Grouper can use LDAP as a subject source
 
 notes file: kh/opt/_asdo/mp-grouper-podman.adoc 
+
 ==== Steps
 
 1.  Add OpenLDAP to the docker-compose.yml file
