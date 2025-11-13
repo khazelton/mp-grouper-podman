@@ -1,0 +1,364 @@
+<resource xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:icfs="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/resource-schema-3" xmlns:org="http://midpoint.evolveum.com/xml/ns/public/common/org-3" xmlns:q="http://prism.evolveum.com/xml/ns/public/query-3" xmlns:ri="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3" xmlns:t="http://prism.evolveum.com/xml/ns/public/types-3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" oid="9ab48eb1-6527-44e4-b5d7-c6754d13d697" version="2">
+    <_metadata id="25">
+        <storage>
+            <createTimestamp>2025-11-11T22:02:18.215Z</createTimestamp>
+            <creatorRef>
+                <t:oid>00000000-0000-0000-0000-000000000002</t:oid>
+                <t:relation>org:default</t:relation>
+                <t:type>c:UserType</t:type>
+            </creatorRef>
+            <createChannel>http://midpoint.evolveum.com/xml/ns/public/common/channels-3#objectImport</createChannel>
+        </storage>
+        <process>
+            <requestTimestamp>2025-11-11T22:02:18.220Z</requestTimestamp>
+            <requestorRef>
+                <t:oid>00000000-0000-0000-0000-000000000002</t:oid>
+                <t:relation>org:default</t:relation>
+                <t:type>c:UserType</t:type>
+            </requestorRef>
+        </process>
+    </_metadata>
+    <name>Source: tinnyHrms HRMS</name>
+    <description>tinny HRMS</description>
+    <lifecycleState>active</lifecycleState>
+    <operationExecution id="26">
+        <recordType>simple</recordType>
+        <timestamp>2025-11-11T22:02:18.263Z</timestamp>
+        <operation>
+            <objectDelta>
+                <t:changeType>add</t:changeType>
+                <t:objectType>c:ResourceType</t:objectType>
+            </objectDelta>
+            <executionResult>
+                <operation>com.evolveum.midpoint.model.impl.lens.ChangeExecutor.executeDelta</operation>
+                <status>success</status>
+                <importance>normal</importance>
+                <token>1000000000000007162</token>
+            </executionResult>
+            <objectName>Source: tinnyHrms HRMS</objectName>
+        </operation>
+        <status>success</status>
+        <initiatorRef oid="00000000-0000-0000-0000-000000000002" relation="org:default" type="c:UserType"/>
+        <channel>http://midpoint.evolveum.com/xml/ns/public/common/channels-3#user</channel>
+    </operationExecution>
+    <iteration>0</iteration>
+    <iterationToken/>
+    <operationalState>
+        <lastAvailabilityStatus>up</lastAvailabilityStatus>
+        <message>Status set to UP because resource schema was successfully fetched</message>
+        <timestamp>2025-11-11T22:02:35.474Z</timestamp>
+        <nodeId>DefaultNode</nodeId>
+    </operationalState>
+    <operationalStateHistory id="27">
+        <lastAvailabilityStatus>up</lastAvailabilityStatus>
+        <message>Status set to UP because resource schema was successfully fetched</message>
+        <timestamp>2025-11-11T22:02:35.474Z</timestamp>
+        <nodeId>DefaultNode</nodeId>
+    </operationalStateHistory>
+    <connectorRef oid="6aaa4847-292a-46fc-bd08-b0e2c6a739a3" relation="org:default" type="c:ConnectorType">
+        <filter>
+            <q:equal>
+                <q:path>c:connectorType</q:path>
+                <q:value>com.evolveum.polygon.connector.csv.CsvConnector</q:value>
+            </q:equal>
+        </filter>
+    </connectorRef>
+    <connectorConfiguration xmlns:icfc="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/connector-schema-3">
+        <icfc:configurationProperties xmlns:cfg="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/com.evolveum.polygon.connector-csv/com.evolveum.polygon.connector.csv.CsvConnector">
+            <cfg:fieldDelimiter>,</cfg:fieldDelimiter>
+            <cfg:filePath>/opt/midpoint/var/tinnyHrms.csv</cfg:filePath>
+            <cfg:nameAttribute>SorID</cfg:nameAttribute>
+            <cfg:uniqueAttribute>ReferenceID</cfg:uniqueAttribute>
+        </icfc:configurationProperties>
+    </connectorConfiguration>
+    <schema>
+        <cachingMetadata>
+            <retrievalTimestamp>2025-11-11T22:02:35.473Z</retrievalTimestamp>
+            <serialNumber>68775e1589446cd7-274a70feacdd6a4f</serialNumber>
+        </cachingMetadata>
+        <definition>
+            <xsd:schema xmlns:a="http://prism.evolveum.com/xml/ns/public/annotation-3" xmlns:ra="http://midpoint.evolveum.com/xml/ns/public/resource/annotation-3" xmlns:tns="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3">
+                <xsd:import namespace="http://prism.evolveum.com/xml/ns/public/annotation-3"/>
+                <xsd:import namespace="http://midpoint.evolveum.com/xml/ns/public/resource/annotation-3"/>
+                <xsd:complexType name="AccountObjectClass">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <a:container>true</a:container>
+                            <ra:resourceObject>true</ra:resourceObject>
+                            <ra:nativeObjectClass>__ACCOUNT__</ra:nativeObjectClass>
+                            <ra:default>true</ra:default>
+                            <ra:auxiliary>false</ra:auxiliary>
+                            <ra:embedded>false</ra:embedded>
+                            <ra:namingAttribute>ri:SorID</ra:namingAttribute>
+                            <ra:displayNameAttribute>ri:SorID</ra:displayNameAttribute>
+                            <ra:identifier>ri:ReferenceID</ra:identifier>
+                            <ra:secondaryIdentifier>ri:SorID</ra:secondaryIdentifier>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                    <xsd:sequence>
+                        <xsd:element minOccurs="0" name="localScopedAffil" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayOrder>120</a:displayOrder>
+                                    <ra:nativeAttributeName>localScopedAffil</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>localScopedAffil</ra:frameworkAttributeName>
+                                    <ra:returnedByDefault>true</ra:returnedByDefault>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="Telephone" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayOrder>130</a:displayOrder>
+                                    <ra:nativeAttributeName>Telephone</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>Telephone</ra:frameworkAttributeName>
+                                    <ra:returnedByDefault>true</ra:returnedByDefault>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="EmailAddress" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayOrder>140</a:displayOrder>
+                                    <ra:nativeAttributeName>EmailAddress</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>EmailAddress</ra:frameworkAttributeName>
+                                    <ra:returnedByDefault>true</ra:returnedByDefault>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="Department" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayOrder>150</a:displayOrder>
+                                    <ra:nativeAttributeName>Department</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>Department</ra:frameworkAttributeName>
+                                    <ra:returnedByDefault>true</ra:returnedByDefault>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="ReferenceID" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayOrder>100</a:displayOrder>
+                                    <ra:nativeAttributeName>ReferenceID</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>ReferenceID</ra:frameworkAttributeName>
+                                    <ra:returnedByDefault>true</ra:returnedByDefault>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="Title" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayOrder>170</a:displayOrder>
+                                    <ra:nativeAttributeName>Title</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>Title</ra:frameworkAttributeName>
+                                    <ra:returnedByDefault>true</ra:returnedByDefault>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="SorID" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayOrder>110</a:displayOrder>
+                                    <ra:nativeAttributeName>SorID</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>__NAME__</ra:frameworkAttributeName>
+                                    <ra:returnedByDefault>true</ra:returnedByDefault>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="FamilyName" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayOrder>180</a:displayOrder>
+                                    <ra:nativeAttributeName>FamilyName</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>FamilyName</ra:frameworkAttributeName>
+                                    <ra:returnedByDefault>true</ra:returnedByDefault>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="GivenName" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayOrder>190</a:displayOrder>
+                                    <ra:nativeAttributeName>GivenName</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>GivenName</ra:frameworkAttributeName>
+                                    <ra:returnedByDefault>true</ra:returnedByDefault>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:schema>
+        </definition>
+    </schema>
+    <schemaHandling>
+        <objectType id="6">
+            <kind>account</kind>
+            <displayName>tinny HRMS Accounts</displayName>
+            <delineation>
+                <objectClass>ri:AccountObjectClass</objectClass>
+            </delineation>
+            <focus>
+                <type>c:UserType</type>
+            </focus>
+            <attribute id="7">
+                <ref>ri:SorID</ref>
+                <inbound id="8">
+                    <name>SorID</name>
+                    <strength>strong</strength>
+                    <target>
+                        <path>personalNumber</path>
+                    </target>
+                </inbound>
+                <inbound id="9">
+                    <description>Assignment of HR SOR archetype</description>
+                    <strength>strong</strength>
+                    <expression>
+                        <assignmentTargetSearch>
+                            <targetType>c:ArchetypeType</targetType>
+                            <oid>9ea701a0-fefb-11e9-aa4a-6f55fba8896e</oid>
+                        </assignmentTargetSearch>
+                    </expression>
+                    <target>
+                        <path>assignment</path>
+                    </target>
+                </inbound>
+                <inbound id="10">
+                    <description>Assignment of HR SOR organization</description>
+                    <strength>strong</strength>
+                    <expression>
+                        <assignmentTargetSearch>
+                            <targetType>c:OrgType</targetType>
+                            <oid>9938f92a-015e-11ea-97bc-a3be3b7d3f5f</oid>
+                        </assignmentTargetSearch>
+                    </expression>
+                    <target>
+                        <path>assignment</path>
+                    </target>
+                </inbound>
+                <inbound id="11">
+                    <description>Assignment of role-ldap-basic role</description>
+                    <strength>strong</strength>
+                    <expression>
+                        <assignmentTargetSearch>
+                            <targetType>c:RoleType</targetType>
+                            <oid>c89f31dd-8d4f-4e0a-82cb-58ff9d8c1b2f</oid>
+                        </assignmentTargetSearch>
+                    </expression>
+                    <target>
+                        <path>assignment</path>
+                    </target>
+                </inbound>
+            </attribute>
+            <attribute id="4">
+                <ref>ri:GivenName</ref>
+                <displayName>Given Name</displayName>
+                <limitations id="15">
+                    <access>
+                        <read>true</read>
+                        <add>false</add>
+                        <modify>false</modify>
+                    </access>
+                </limitations>
+                <inbound id="16">
+                    <target>
+                        <path>givenName</path>
+                    </target>
+                </inbound>
+            </attribute>
+            <attribute id="5">
+                <ref>ri:FamilyName</ref>
+                <displayName>Family Name</displayName>
+                <limitations id="17">
+                    <access>
+                        <read>true</read>
+                        <add>false</add>
+                        <modify>false</modify>
+                    </access>
+                </limitations>
+                <inbound id="18">
+                    <target>
+                        <path>familyName</path>
+                    </target>
+                </inbound>
+                <inbound id="19">
+                    <source>
+                        <name>givenName</name>
+                        <path>$projection/attributes/ri:GivenName</path>
+                    </source>
+                    <expression>
+                        <script>
+                            <code>basic.concatName(givenName, input)</code>
+                        </script>
+                    </expression>
+                    <target>
+                        <path>fullName</path>
+                    </target>
+                </inbound>
+            </attribute>
+            <attribute id="13">
+                <ref>ri:EmailAddress</ref>
+                <inbound id="14">
+                    <strength>strong</strength>
+                    <target>
+                        <path>emailAddress</path>
+                    </target>
+                </inbound>
+            </attribute>
+            <synchronization>
+                <reaction id="17">
+                    <situation>unmatched</situation>
+                    <actions>
+                        <addFocus id="21"/>
+                    </actions>
+                </reaction>
+                <reaction id="18">
+                    <situation>linked</situation>
+                    <actions>
+                        <synchronize id="22"/>
+                    </actions>
+                </reaction>
+                <reaction id="19">
+                    <situation>unlinked</situation>
+                    <actions>
+                        <link id="23"/>
+                    </actions>
+                </reaction>
+                <reaction id="20">
+                    <situation>deleted</situation>
+                    <actions>
+                        <unlink id="24"/>
+                    </actions>
+                </reaction>
+            </synchronization>
+        </objectType>
+    </schemaHandling>
+    <capabilities>
+        <cachingMetadata>
+            <retrievalTimestamp>2024-02-07T17:05:35.814Z</retrievalTimestamp>
+            <serialNumber>e73fa8d65931b6bc-4eabdcb9ec28539f</serialNumber>
+        </cachingMetadata>
+        <native xmlns:cap="http://midpoint.evolveum.com/xml/ns/public/resource/capabilities-3">
+            <cap:schema/>
+            <cap:discoverConfiguration/>
+            <cap:liveSync/>
+            <cap:create/>
+            <cap:read>
+                <cap:returnDefaultAttributesOption>false</cap:returnDefaultAttributesOption>
+            </cap:read>
+            <cap:update>
+                <cap:addRemoveAttributeValues>true</cap:addRemoveAttributeValues>
+            </cap:update>
+            <cap:delete/>
+            <cap:testConnection/>
+            <cap:script>
+                <cap:host id="4">
+                    <cap:type>resource</cap:type>
+                </cap:host>
+                <cap:host id="5">
+                    <cap:type>connector</cap:type>
+                </cap:host>
+            </cap:script>
+        </native>
+    </capabilities>
+</resource>

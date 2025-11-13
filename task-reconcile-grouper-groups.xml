@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<task xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
+      xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
+      xmlns:q="http://prism.evolveum.com/xml/ns/public/query-3"
+      xmlns:ri="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3">
+
+    <name>Reconcile Grouper Groups</name>
+    <description>Reconciliation task to import Grouper groups from database into midPoint as roles</description>
+
+    <!-- Task ownership and category -->
+    <ownerRef oid="00000000-0000-0000-0000-000000000002" type="c:UserType"/> <!-- administrator -->
+    <category>Reconciliation</category>
+
+    <!-- Activity configuration -->
+    <activity>
+        <work>
+            <reconciliation>
+                <resourceObjects>
+                    <resourceRef oid="9ab48eb1-6527-44e4-b5d7-c6754d13d698"/> <!-- Grouper Groups Database -->
+                    <kind>generic</kind>
+                    <intent>group</intent>
+                </resourceObjects>
+            </reconciliation>
+        </work>
+    </activity>
+
+</task>

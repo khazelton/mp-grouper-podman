@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
+     xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
+     xmlns:org="http://midpoint.evolveum.com/xml/ns/public/common/org-3"
+     oid="9938f92a-015e-11ea-97bc-a3be3b7d3f5f">
+    <name>HR SOR</name>
+    <displayName>HR System of Record</displayName>
+    <description>Organization for users sourced from HR System of Record (tinnyHrms)</description>
+</org>

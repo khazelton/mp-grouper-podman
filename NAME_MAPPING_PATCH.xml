@@ -1,0 +1,29 @@
+<!--
+QUICK FIX: Add this inbound mapping to the SorID attribute
+
+Instructions:
+1. Open midPoint UI: http://localhost:8080/midpoint/
+2. Login: administrator / Test5ecr3t
+3. Go to: Configuration → Repository Objects
+4. Search for: "Source: tinnyHrms HRMS"
+5. Click the resource → Edit XML (switch to XML editor mode)
+6. Find the <attribute> section with <ref>ri:SorID</ref> (around line 100-120)
+7. After the LAST </inbound> tag in that attribute section, ADD this:
+-->
+
+<inbound>
+    <name>Generate name from SorID</name>
+    <description>Maps SorID to user name (username). Fixes NoFocusNameSchemaException.</description>
+    <strength>strong</strength>
+    <target>
+        <path>name</path>
+    </target>
+</inbound>
+
+<!--
+8. Click Save
+9. Go to: Resources → Source: tinnyHrms HRMS → Accounts tab
+10. Click "Reconcile" to rerun reconciliation
+
+Expected result: Users will be created with their SorID as the username
+-->

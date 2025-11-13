@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resource xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
+          xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
+          xmlns:q="http://prism.evolveum.com/xml/ns/public/query-3"
+          xmlns:icfs="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/resource-schema-3"
+          xmlns:ri="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3"
+          xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          oid="9ab48eb1-6527-44e4-b5d7-c6754d13d698">
+
+    <name>Grouper Groups Database</name>
+    <description>Grouper groups via direct database access (PostgreSQL)</description>
+
+    <connectorRef type="c:ConnectorType">
+        <filter>
+            <q:and>
+                <q:equal>
+                    <q:path>connectorType</q:path>
+                    <q:value>org.identityconnectors.databasetable.DatabaseTableConnector</q:value>
+                </q:equal>
+            </q:and>
+        </filter>
+    </connectorRef>
+
+    <connectorConfiguration xmlns:icfc="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/connector-schema-3">
+        <icfc:configurationProperties
+                xmlns:gen="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/com.evolveum.polygon.connector-databasetable/org.identityconnectors.databasetable.DatabaseTableConnector">
+
+            <!-- Database connection -->
+            <gen:jdbcDriver>org.postgresql.Driver</gen:jdbcDriver>
+            <gen:jdbcUrlTemplate>jdbc:postgresql://docomp-postgres-1:5432/postgres</gen:jdbcUrlTemplate>
+            <gen:user>postgres</gen:user>
+            <gen:password>
+                <t:clearValue xmlns:t="http://prism.evolveum.com/xml/ns/public/types-3">pass</t:clearValue>
+            </gen:password>
+
+            <!-- Table configuration -->
+            <gen:table>grouper_groups</gen:table>
+            <gen:keyColumn>id</gen:keyColumn>
+
+            <!-- Read-only mode for safety -->
+            <gen:enableEmptyString>false</gen:enableEmptyString>
+            <gen:rethrowAllSQLExceptions>true</gen:rethrowAllSQLExceptions>
+            <gen:nativeTimestamps>false</gen:nativeTimestamps>
+            <gen:allNative>false</gen:allNative>
+        </icfc:configurationProperties>
+
+        <icfc:resultsHandlerConfiguration>
+            <icfc:enableNormalizingResultsHandler>false</icfc:enableNormalizingResultsHandler>
+            <icfc:enableFilteredResultsHandler>false</icfc:enableFilteredResultsHandler>
+            <icfc:enableAttributesToGetSearchResultsHandler>false</icfc:enableAttributesToGetSearchResultsHandler>
+        </icfc:resultsHandlerConfiguration>
+    </connectorConfiguration>
+
+    <schemaHandling>
+        <objectType>
+            <kind>generic</kind>
+            <intent>group</intent>
+            <displayName>Grouper Group</displayName>
+            <objectClass>ri:AccountObjectClass</objectClass>
+
+            <attribute>
+                <ref>ri:id</ref>
+                <displayName>Group ID</displayName>
+                <limitations>
+                    <access>
+                        <read>true</read>
+                        <add>false</add>
+                        <modify>false</modify>
+                    </access>
+                </limitations>
+            </attribute>
+
+            <attribute>
+                <ref>ri:name</ref>
+                <displayName>Group Name</displayName>
+                <limitations>
+                    <access>
+                        <read>true</read>
+                        <add>false</add>
+                        <modify>false</modify>
+                    </access>
+                </limitations>
+                <inbound>
+                    <strength>strong</strength>
+                    <target>
+                        <path>name</path>
+                    </target>
+                    <expression>
+                        <script>
+                            <code>
+                                // Convert Grouper group name to midPoint role name
+                                // Replace colons with underscores
+                                'grouper_' + input?.replaceAll(':', '_')
+                            </code>
+                        </script>
+                    </expression>
+                </inbound>
+            </attribute>
+
+            <attribute>
+                <ref>ri:display_name</ref>
+                <displayName>Display Name</displayName>
+                <inbound>
+                    <strength>strong</strength>
+                    <target>
+                        <path>displayName</path>
+                    </target>
+                </inbound>
+            </attribute>
+
+            <attribute>
+                <ref>ri:description</ref>
+                <displayName>Description</displayName>
+                <inbound>
+                    <strength>weak</strength>
+                    <target>
+                        <path>description</path>
+                    </target>
+                </inbound>
+            </attribute>
+
+            <!-- Synchronization configuration -->
+            <synchronization>
+                <reaction>
+                    <situation>unmatched</situation>
+                    <actions>
+                        <addFocus/>
+                    </actions>
+                </reaction>
+                <reaction>
+                    <situation>linked</situation>
+                    <actions>
+                        <synchronize/>
+                    </actions>
+                </reaction>
+                <reaction>
+                    <situation>deleted</situation>
+                    <actions>
+                        <deleteFocus/>
+                    </actions>
+                </reaction>
+            </synchronization>
+        </objectType>
+    </schemaHandling>
+
+    <capabilities>
+        <cachingMetadata>
+            <retrievalTimestamp>2025-11-12T17:00:00.000Z</retrievalTimestamp>
+        </cachingMetadata>
+        <native xmlns:cap="http://midpoint.evolveum.com/xml/ns/public/resource/capabilities-3">
+            <cap:read/>
+            <cap:testConnection/>
+        </native>
+        <configured xmlns:cap="http://midpoint.evolveum.com/xml/ns/public/resource/capabilities-3">
+            <cap:read>
+                <cap:cachingOnly>false</cap:cachingOnly>
+            </cap:read>
+        </configured>
+    </capabilities>
+</resource>

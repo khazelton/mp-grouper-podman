@@ -63,8 +63,28 @@ services:
      - midpoint_home:/opt/midpoint/var
 
 
-
-
+  postgres:
+    image: "postgres:14"
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=pass
+  grouper:
+    image: "i2incommon/grouper:5.21.3"
+    restart: always
+    ports:
+      - '443:8443'
+    command:
+      - quickstart
+    environment:
+      - GROUPERSYSTEM_QUICKSTART_PASS=pass
+      - GROUPER_MORPHSTRING_ENCRYPT_KEY=abcd1234
+      - GROUPER_DATABASE_PASSWORD=pass
+      - GROUPER_DATABASE_USERNAME=postgres
+      - GROUPER_DATABASE_URL=jdbc:postgresql://postgres:5432/postgres
+      - GROUPER_AUTO_DDL_UPTOVERSION=v5.*.*
 
 
 networks:

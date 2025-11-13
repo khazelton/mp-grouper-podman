@@ -1,0 +1,11 @@
+[2025-11-12 10:48:44] [INFO] === Container Health Monitor Started ===
+[2025-11-12 10:48:44] [INFO] Log file: /Users/kh/opt/mp-grouper-podman/container_restart.log
+[2025-11-12 10:48:44] [INFO] Monitoring containers: mp-grouper-podman-midpoint_server-1 mp-grouper-podman-midpoint_data-1
+[2025-11-12 10:48:44] [INFO] Check interval: 60s
+[2025-11-12 10:48:44] [INFO] Max restarts per hour: 3
+[2025-11-12 10:48:44] [INFO] Restart cooldown: 300s
+[2025-11-12 10:48:44] [INFO] Starting health check cycle...
+[2025-11-12 10:48:44] [INFO] Container mp-grouper-podman-midpoint_server-1 is healthy (status: running, health: healthy)
+[2025-11-12 10:48:44] [INFO] Container mp-grouper-podman-midpoint_data-1 is healthy (status: running, health: none)
+[2025-11-12 10:48:44] [INFO] Health check complete: 2 containers checked, 2 healthy, 0 restarted, 0 failed
+[2025-11-12 10:48:44] [INFO] Single check complete. Use --daemon for continuous monitoring.

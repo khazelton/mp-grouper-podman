@@ -1,0 +1,371 @@
+<c:resource xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:ns1="http://prism.evolveum.com/xml/ns/public/types-3" xmlns:ns2="http://prism.evolveum.com/xml/ns/public/query-3" xmlns:ns3="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/connector-schema-3" xmlns:ns4="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/com.evolveum.polygon.connector-csv/com.evolveum.polygon.connector.csv.CsvConnector" xmlns:ns6="http://prism.evolveum.com/xml/ns/public/annotation-3" xmlns:ns7="http://midpoint.evolveum.com/xml/ns/public/resource/annotation-3" xmlns:ns8="http://midpoint.evolveum.com/xml/ns/public/resource/capabilities-3" xmlns:xs="http://www.w3.org/2001/XMLSchema" oid="9ab48eb1-6527-44e4-b5d7-c6754d13d697" version="2">
+    <c:_metadata id="25">
+        <c:storage>
+            <c:createTimestamp>2025-11-11T22:02:18.215Z</c:createTimestamp>
+            <c:creatorRef>
+                <ns1:oid>00000000-0000-0000-0000-000000000002</ns1:oid>
+                <ns1:relation>org:default</ns1:relation>
+                <ns1:type>c:UserType</ns1:type>
+            </c:creatorRef>
+            <c:createChannel>http://midpoint.evolveum.com/xml/ns/public/common/channels-3#objectImport</c:createChannel>
+        </c:storage>
+        <c:process>
+            <c:requestTimestamp>2025-11-11T22:02:18.220Z</c:requestTimestamp>
+            <c:requestorRef>
+                <ns1:oid>00000000-0000-0000-0000-000000000002</ns1:oid>
+                <ns1:relation>org:default</ns1:relation>
+                <ns1:type>c:UserType</ns1:type>
+            </c:requestorRef>
+        </c:process>
+    </c:_metadata>
+    <c:name>Source: tinnyHrms HRMS</c:name>
+    <c:description>tinny HRMS</c:description>
+    <c:lifecycleState>active</c:lifecycleState>
+    <c:operationExecution id="26">
+        <c:recordType>simple</c:recordType>
+        <c:timestamp>2025-11-11T22:02:18.263Z</c:timestamp>
+        <c:operation>
+            <c:objectDelta>
+                <ns1:changeType>add</ns1:changeType>
+                <ns1:objectType>c:ResourceType</ns1:objectType>
+            </c:objectDelta>
+            <c:executionResult>
+                <c:operation>com.evolveum.midpoint.model.impl.lens.ChangeExecutor.executeDelta</c:operation>
+                <c:status>success</c:status>
+                <c:importance>normal</c:importance>
+                <c:token>1000000000000007162</c:token>
+            </c:executionResult>
+            <c:objectName>Source: tinnyHrms HRMS</c:objectName>
+        </c:operation>
+        <c:status>success</c:status>
+        <c:initiatorRef oid="00000000-0000-0000-0000-000000000002" relation="org:default" type="c:UserType" />
+        <c:channel>http://midpoint.evolveum.com/xml/ns/public/common/channels-3#user</c:channel>
+    </c:operationExecution>
+    <c:iteration>0</c:iteration>
+    <c:iterationToken />
+    <c:operationalState>
+        <c:lastAvailabilityStatus>up</c:lastAvailabilityStatus>
+        <c:message>Status set to UP because resource schema was successfully fetched</c:message>
+        <c:timestamp>2025-11-11T22:02:35.474Z</c:timestamp>
+        <c:nodeId>DefaultNode</c:nodeId>
+    </c:operationalState>
+    <c:operationalStateHistory id="27">
+        <c:lastAvailabilityStatus>up</c:lastAvailabilityStatus>
+        <c:message>Status set to UP because resource schema was successfully fetched</c:message>
+        <c:timestamp>2025-11-11T22:02:35.474Z</c:timestamp>
+        <c:nodeId>DefaultNode</c:nodeId>
+    </c:operationalStateHistory>
+    <c:connectorRef oid="6aaa4847-292a-46fc-bd08-b0e2c6a739a3" relation="org:default" type="c:ConnectorType">
+        <c:filter>
+            <ns2:equal>
+                <ns2:path>c:connectorType</ns2:path>
+                <ns2:value>com.evolveum.polygon.connector.csv.CsvConnector</ns2:value>
+            </ns2:equal>
+        </c:filter>
+    </c:connectorRef>
+    <c:connectorConfiguration>
+        <ns3:configurationProperties>
+            <ns4:fieldDelimiter>,</ns4:fieldDelimiter>
+            <ns4:filePath>/opt/midpoint/var/tinnyHrms.csv</ns4:filePath>
+            <ns4:nameAttribute>SorID</ns4:nameAttribute>
+            <ns4:uniqueAttribute>ReferenceID</ns4:uniqueAttribute>
+        </ns3:configurationProperties>
+    </c:connectorConfiguration>
+    <c:schema>
+        <c:cachingMetadata>
+            <c:retrievalTimestamp>2025-11-11T22:02:35.473Z</c:retrievalTimestamp>
+            <c:serialNumber>68775e1589446cd7-274a70feacdd6a4f</c:serialNumber>
+        </c:cachingMetadata>
+        <c:definition>
+            <xs:schema elementFormDefault="qualified" targetNamespace="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3">
+                <xs:import namespace="http://prism.evolveum.com/xml/ns/public/annotation-3" />
+                <xs:import namespace="http://midpoint.evolveum.com/xml/ns/public/resource/annotation-3" />
+                <xs:complexType name="AccountObjectClass">
+                    <xs:annotation>
+                        <xs:appinfo>
+                            <ns6:container>true</ns6:container>
+                            <ns7:resourceObject>true</ns7:resourceObject>
+                            <ns7:nativeObjectClass>__ACCOUNT__</ns7:nativeObjectClass>
+                            <ns7:default>true</ns7:default>
+                            <ns7:auxiliary>false</ns7:auxiliary>
+                            <ns7:embedded>false</ns7:embedded>
+                            <ns7:namingAttribute>ri:SorID</ns7:namingAttribute>
+                            <ns7:displayNameAttribute>ri:SorID</ns7:displayNameAttribute>
+                            <ns7:identifier>ri:ReferenceID</ns7:identifier>
+                            <ns7:secondaryIdentifier>ri:SorID</ns7:secondaryIdentifier>
+                        </xs:appinfo>
+                    </xs:annotation>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="localScopedAffil" type="xsd:string">
+                            <xs:annotation>
+                                <xs:appinfo>
+                                    <ns6:displayOrder>120</ns6:displayOrder>
+                                    <ns7:nativeAttributeName>localScopedAffil</ns7:nativeAttributeName>
+                                    <ns7:frameworkAttributeName>localScopedAffil</ns7:frameworkAttributeName>
+                                    <ns7:returnedByDefault>true</ns7:returnedByDefault>
+                                </xs:appinfo>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element minOccurs="0" name="Telephone" type="xsd:string">
+                            <xs:annotation>
+                                <xs:appinfo>
+                                    <ns6:displayOrder>130</ns6:displayOrder>
+                                    <ns7:nativeAttributeName>Telephone</ns7:nativeAttributeName>
+                                    <ns7:frameworkAttributeName>Telephone</ns7:frameworkAttributeName>
+                                    <ns7:returnedByDefault>true</ns7:returnedByDefault>
+                                </xs:appinfo>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element minOccurs="0" name="EmailAddress" type="xsd:string">
+                            <xs:annotation>
+                                <xs:appinfo>
+                                    <ns6:displayOrder>140</ns6:displayOrder>
+                                    <ns7:nativeAttributeName>EmailAddress</ns7:nativeAttributeName>
+                                    <ns7:frameworkAttributeName>EmailAddress</ns7:frameworkAttributeName>
+                                    <ns7:returnedByDefault>true</ns7:returnedByDefault>
+                                </xs:appinfo>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element minOccurs="0" name="Department" type="xsd:string">
+                            <xs:annotation>
+                                <xs:appinfo>
+                                    <ns6:displayOrder>150</ns6:displayOrder>
+                                    <ns7:nativeAttributeName>Department</ns7:nativeAttributeName>
+                                    <ns7:frameworkAttributeName>Department</ns7:frameworkAttributeName>
+                                    <ns7:returnedByDefault>true</ns7:returnedByDefault>
+                                </xs:appinfo>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="ReferenceID" type="xsd:string">
+                            <xs:annotation>
+                                <xs:appinfo>
+                                    <ns6:displayOrder>100</ns6:displayOrder>
+                                    <ns7:nativeAttributeName>ReferenceID</ns7:nativeAttributeName>
+                                    <ns7:frameworkAttributeName>ReferenceID</ns7:frameworkAttributeName>
+                                    <ns7:returnedByDefault>true</ns7:returnedByDefault>
+                                </xs:appinfo>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element minOccurs="0" name="Title" type="xsd:string">
+                            <xs:annotation>
+                                <xs:appinfo>
+                                    <ns6:displayOrder>170</ns6:displayOrder>
+                                    <ns7:nativeAttributeName>Title</ns7:nativeAttributeName>
+                                    <ns7:frameworkAttributeName>Title</ns7:frameworkAttributeName>
+                                    <ns7:returnedByDefault>true</ns7:returnedByDefault>
+                                </xs:appinfo>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element minOccurs="0" name="SorID" type="xsd:string">
+                            <xs:annotation>
+                                <xs:appinfo>
+                                    <ns6:displayOrder>110</ns6:displayOrder>
+                                    <ns7:nativeAttributeName>SorID</ns7:nativeAttributeName>
+                                    <ns7:frameworkAttributeName>__NAME__</ns7:frameworkAttributeName>
+                                    <ns7:returnedByDefault>true</ns7:returnedByDefault>
+                                </xs:appinfo>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element minOccurs="0" name="FamilyName" type="xsd:string">
+                            <xs:annotation>
+                                <xs:appinfo>
+                                    <ns6:displayOrder>180</ns6:displayOrder>
+                                    <ns7:nativeAttributeName>FamilyName</ns7:nativeAttributeName>
+                                    <ns7:frameworkAttributeName>FamilyName</ns7:frameworkAttributeName>
+                                    <ns7:returnedByDefault>true</ns7:returnedByDefault>
+                                </xs:appinfo>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element minOccurs="0" name="GivenName" type="xsd:string">
+                            <xs:annotation>
+                                <xs:appinfo>
+                                    <ns6:displayOrder>190</ns6:displayOrder>
+                                    <ns7:nativeAttributeName>GivenName</ns7:nativeAttributeName>
+                                    <ns7:frameworkAttributeName>GivenName</ns7:frameworkAttributeName>
+                                    <ns7:returnedByDefault>true</ns7:returnedByDefault>
+                                </xs:appinfo>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:schema>
+        </c:definition>
+    </c:schema>
+    <c:schemaHandling>
+        <c:objectType id="6">
+            <c:kind>account</c:kind>
+            <c:displayName>tinny HRMS Accounts</c:displayName>
+            <c:delineation>
+                <c:objectClass>ri:AccountObjectClass</c:objectClass>
+            </c:delineation>
+            <c:focus>
+                <c:type>c:UserType</c:type>
+            </c:focus>
+            <c:attribute id="7">
+                <c:ref>ri:SorID</c:ref>
+                <c:inbound id="8">
+                    <c:name>SorID</c:name>
+                    <c:strength>strong</c:strength>
+                    <c:target>
+                        <c:path>personalNumber</c:path>
+                    </c:target>
+                </c:inbound>
+                <c:inbound id="9">
+                    <c:description>Assignment of HR SOR archetype</c:description>
+                    <c:strength>strong</c:strength>
+                    <c:expression>
+                        <c:assignmentTargetSearch>
+                            <c:targetType>c:ArchetypeType</c:targetType>
+                            <c:oid>9ea701a0-fefb-11e9-aa4a-6f55fba8896e</c:oid>
+                        </c:assignmentTargetSearch>
+                    </c:expression>
+                    <c:target>
+                        <c:path>assignment</c:path>
+                    </c:target>
+                </c:inbound>
+                <c:inbound id="10">
+                    <c:description>Assignment of HR SOR organization</c:description>
+                    <c:strength>strong</c:strength>
+                    <c:expression>
+                        <c:assignmentTargetSearch>
+                            <c:targetType>c:OrgType</c:targetType>
+                            <c:oid>9938f92a-015e-11ea-97bc-a3be3b7d3f5f</c:oid>
+                        </c:assignmentTargetSearch>
+                    </c:expression>
+                    <c:target>
+                        <c:path>assignment</c:path>
+                    </c:target>
+                </c:inbound>
+                <c:inbound id="11">
+                    <c:description>Assignment of role-ldap-basic role</c:description>
+                    <c:strength>strong</c:strength>
+                    <c:expression>
+                        <c:assignmentTargetSearch>
+                            <c:targetType>c:RoleType</c:targetType>
+                            <c:oid>c89f31dd-8d4f-4e0a-82cb-58ff9d8c1b2f</c:oid>
+                        </c:assignmentTargetSearch>
+                    </c:expression>
+                    <c:target>
+                        <c:path>assignment</c:path>
+                    </c:target>
+                </c:inbound>
+            <c:inbound id="28">
+        <c:name>Generate name from SorID</c:name>
+        <c:description>Maps SorID to user name (username). Added to fix NoFocusNameSchemaException.</c:description>
+        <c:strength>strong</c:strength>
+        <c:target>
+            <c:path>name</c:path>
+        </c:target>
+    </c:inbound></c:attribute>
+            <c:attribute id="4">
+                <c:ref>ri:GivenName</c:ref>
+                <c:displayName>Given Name</c:displayName>
+                <c:limitations id="15">
+                    <c:access>
+                        <c:read>true</c:read>
+                        <c:add>false</c:add>
+                        <c:modify>false</c:modify>
+                    </c:access>
+                </c:limitations>
+                <c:inbound id="16">
+                    <c:target>
+                        <c:path>givenName</c:path>
+                    </c:target>
+                </c:inbound>
+            </c:attribute>
+            <c:attribute id="5">
+                <c:ref>ri:FamilyName</c:ref>
+                <c:displayName>Family Name</c:displayName>
+                <c:limitations id="17">
+                    <c:access>
+                        <c:read>true</c:read>
+                        <c:add>false</c:add>
+                        <c:modify>false</c:modify>
+                    </c:access>
+                </c:limitations>
+                <c:inbound id="18">
+                    <c:target>
+                        <c:path>familyName</c:path>
+                    </c:target>
+                </c:inbound>
+                <c:inbound id="19">
+                    <c:source>
+                        <c:name>givenName</c:name>
+                        <c:path>$projection/attributes/ri:GivenName</c:path>
+                    </c:source>
+                    <c:expression>
+                        <c:script>
+                            <c:code>basic.concatName(givenName, input)</c:code>
+                        </c:script>
+                    </c:expression>
+                    <c:target>
+                        <c:path>fullName</c:path>
+                    </c:target>
+                </c:inbound>
+            </c:attribute>
+            <c:attribute id="13">
+                <c:ref>ri:EmailAddress</c:ref>
+                <c:inbound id="14">
+                    <c:strength>strong</c:strength>
+                    <c:target>
+                        <c:path>emailAddress</c:path>
+                    </c:target>
+                </c:inbound>
+            </c:attribute>
+            <c:synchronization>
+                <c:reaction id="17">
+                    <c:situation>unmatched</c:situation>
+                    <c:actions>
+                        <c:addFocus id="21" />
+                    </c:actions>
+                </c:reaction>
+                <c:reaction id="18">
+                    <c:situation>linked</c:situation>
+                    <c:actions>
+                        <c:synchronize id="22" />
+                    </c:actions>
+                </c:reaction>
+                <c:reaction id="19">
+                    <c:situation>unlinked</c:situation>
+                    <c:actions>
+                        <c:link id="23" />
+                    </c:actions>
+                </c:reaction>
+                <c:reaction id="20">
+                    <c:situation>deleted</c:situation>
+                    <c:actions>
+                        <c:unlink id="24" />
+                    </c:actions>
+                </c:reaction>
+            </c:synchronization>
+        </c:objectType>
+    </c:schemaHandling>
+    <c:capabilities>
+        <c:cachingMetadata>
+            <c:retrievalTimestamp>2024-02-07T17:05:35.814Z</c:retrievalTimestamp>
+            <c:serialNumber>e73fa8d65931b6bc-4eabdcb9ec28539f</c:serialNumber>
+        </c:cachingMetadata>
+        <c:native>
+            <ns8:schema />
+            <ns8:discoverConfiguration />
+            <ns8:liveSync />
+            <ns8:create />
+            <ns8:read>
+                <ns8:returnDefaultAttributesOption>false</ns8:returnDefaultAttributesOption>
+            </ns8:read>
+            <ns8:update>
+                <ns8:addRemoveAttributeValues>true</ns8:addRemoveAttributeValues>
+            </ns8:update>
+            <ns8:delete />
+            <ns8:testConnection />
+            <ns8:script>
+                <ns8:host id="4">
+                    <ns8:type>resource</ns8:type>
+                </ns8:host>
+                <ns8:host id="5">
+                    <ns8:type>connector</ns8:type>
+                </ns8:host>
+            </ns8:script>
+        </c:native>
+    </c:capabilities>
+</c:resource>

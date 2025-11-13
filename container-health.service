@@ -1,0 +1,35 @@
+# Systemd service file for container health monitoring
+# Install to: /etc/systemd/system/container-health.service
+#
+# Installation:
+#   sudo cp container-health.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable container-health.service
+#   sudo systemctl start container-health.service
+#
+# Check status:
+#   sudo systemctl status container-health.service
+#
+# View logs:
+#   sudo journalctl -u container-health.service -f
+
+[Unit]
+Description=Container Health Monitor and Auto-Restart
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+User=%USER%
+WorkingDirectory=%WORKDIR%
+ExecStart=%WORKDIR%/auto_restart_unhealthy.sh --daemon --interval 60
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+# Logging
+SyslogIdentifier=container-health
+
+[Install]
+WantedBy=multi-user.target
